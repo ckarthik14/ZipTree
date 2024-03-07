@@ -92,7 +92,7 @@ class ZipTree:
 		return node
 
 	def remove(self, key: KeyType):
-		self.root = self._remove(self.root, key)
+		self.root = self._remove(key, self.root)
 		if self.root is not None:
 			self.size -= 1
 
