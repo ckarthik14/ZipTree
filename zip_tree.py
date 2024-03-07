@@ -31,32 +31,36 @@ class ZipTree:
 	def insert(self, key: KeyType, val: ValType, rank: int = -1):
 		if rank == -1:
 			rank = self.get_random_rank()
-		self.root = self._insert_rec(self.root, key, val, rank)
+		self.root = self._insert_rec(self.root, ZipTreeNode(key, val, rank))
 		self.size += 1
 
-	def _insert_rec(self, node, key, val, rank):
+	def _insert_rec(self, node, key_node):
 		if node is None:
-			return ZipTreeNode(key, val, rank)
-		if key < node.key:
-			node.left = self._insert_rec(node.left, key, val, rank)
-			if node.left.rank > node.rank:
-				node = self._rotate_right(node)
-		elif key > node.key:
-			node.right = self._insert_rec(node.right, key, val, rank)
-			if node.right.rank > node.rank:
-				node = self._rotate_left(node)
-		else:  # Update the value if the key already exists
-			node.val = val
+			return key_node
+		if key_node.key < node.key:
+			temp = self._insert_rec(node.left, key_node)
+			
+			if (temp == key_node):
+				if key_node.rank >= node.rank:
+					node = self._rotate_right(node, key_node)
+				else:
+					node.left = key_node
+		else:
+			temp = self._insert_rec(node.right, key_node)
+			
+			if (temp == key_node):
+				if key_node.rank > node.rank:
+					node = self._rotate_left(node, key_node)
+				else:
+					node.right = key_node
 		return node
 
-	def _rotate_left(self, node):
-		new_root = node.right
+	def _rotate_left(self, node, new_root):
 		node.right = new_root.left
 		new_root.left = node
 		return new_root
 
-	def _rotate_right(self, node):
-		new_root = node.left
+	def _rotate_right(self, node, new_root):
 		node.left = new_root.right
 		new_root.right = node
 		return new_root
@@ -111,7 +115,7 @@ class ZipTree:
 		return self.size
 
 	def get_height(self) -> int:
-		return self._get_height_rec(self.root)
+		return self._get_height_rec(self.root) - 1
 
 	def _get_height_rec(self, node):
 		if node is None:
