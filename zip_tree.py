@@ -61,7 +61,7 @@ class ZipTree:
 		new_root.right = node
 		return new_root
 
-	def zip(self, x, y):
+	def _zip(self, x, y):
 		if x == None:
 			return y
 		if y == None:
@@ -72,32 +72,29 @@ class ZipTree:
 		else:
 			x.right = zip(x.right , y)
 			return x
-
-	def remove(self, key: KeyType):
-		self.root = self._remove_rec(self.root, key)
-		if self.root is not None:
-			self.size -= 1
-
-	def _remove_rec(self, node, key):
+		
+	def _remove(self, key: KeyType, node: ZipTreeNode[KeyType, ValType]):
 		if node is None:
 			return None
-		if key < node.key:
-			node.left = self._remove_rec(node.left, key)
-		elif key > node.key:
-			node.right = self._remove_rec(node.right, key)
-		else:
-			if node.left is None:
-				return node.right
-			elif node.right is None:
-				return node.left
+
+		if key == node.key:
+			return self._zip(node.left, node.right)
+		elif key < node.key:
+			if node.left and key == node.left.key:
+				node.left = self._zip(node.left.left, node.left.right)
 			else:
-				if node.left.rank < node.right.rank:
-					node = self._rotate_left(node)
-					node.left = self._remove_rec(node.left, key)
-				else:
-					node = self._rotate_right(node)
-					node.right = self._remove_rec(node.right, key)
+				node.left = self._remove(key, node.left)
+		else:  # key > node.key
+			if node.right and key == node.right.key:
+				node.right = self._zip(node.right.left, node.right.right)
+			else:
+				node.right = self._remove(key, node.right)
 		return node
+
+	def remove(self, key: KeyType):
+		self.root = self._remove(self.root, key)
+		if self.root is not None:
+			self.size -= 1
 
 	def find(self, key: KeyType) -> ValType:
 		node = self.root
