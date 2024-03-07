@@ -23,7 +23,7 @@ class ZipTree:
 	@staticmethod
 	def get_random_rank() -> int:
 		# Geometric distribution simulation with p=0.5 (mean=1)
-		rank = 1
+		rank = 0
 		while random.randint(0, 1) == 0:
 			rank += 1
 		return rank
@@ -73,7 +73,7 @@ class ZipTree:
 			x.right = zip(x.right , y)
 			return x
 		
-	def _remove(self, key: KeyType, node: ZipTreeNode[KeyType, ValType]):
+	def _remove(self, key: KeyType, node: ZipTreeNode):
 		if node is None:
 			return None
 
