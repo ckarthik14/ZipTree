@@ -71,10 +71,10 @@ class ZipTree:
 		if y == None:
 			return x
 		if x.rank < y.rank:
-			y.left = zip(x, y.left)
+			y.left = self._zip(x, y.left)
 			return y
 		else:
-			x.right = zip(x.right , y)
+			x.right = self._zip(x.right , y)
 			return x
 		
 	def _remove(self, key: KeyType, node: ZipTreeNode):
